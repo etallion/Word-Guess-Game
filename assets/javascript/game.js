@@ -15,7 +15,7 @@ var game = {
     "assets/images/stepbrothers.jpg",
     "assets/images/mugatu.png",
     "assets/images/frank-tank.jpg"],
-    audioFiles : ["assets/audio/piss.mp3",
+    audioFiles : ["assets/audio/first.mp3",
     "assets/audio/elf.mp3",
     "assets/audio/bigdeal.mp3",
     "assets/audio/blades.mp3",
@@ -112,6 +112,9 @@ var game = {
             game.solvedWords.push(game.currentIndex);
             game.myAudioElements[game.currentIndex].play();
              $("#will-pic").attr("src", game.imageFiles[game.currentIndex]);
+             var btnName = "sound" + game.currentIndex;
+             $("#" + btnName).prop("disabled", false);
+             $("#" + btnName).removeClass("disabled");
              init();
         } else {
             $("#message").html("Rats, you lost.");
