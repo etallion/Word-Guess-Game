@@ -25,12 +25,15 @@ var game = {
     alphabet:["a","b", "c", "d", "e", "f", "g",
     "h","i","j","k","l","m","n","o","p","q","r",
     "s","t","u","v","w","x","y","z"],
+    currentIndex : null,
     myAudioElements : [],
     usedLetters:[],
     guessesLeft:0,
     activeAnswer: "",
     isCharHidden: [],
+    solvedWords : [],
     hasWon: false,
+    isGameInProgress: false,
     charFound: function(letter){
 
         //parse activeAnswer for position(s) of matching character
@@ -43,12 +46,11 @@ var game = {
        $("#hiddenWord").html(game.updatedDisplay());
         
         //check to see if puzzle solved by looking for all true values in isCharHidden
-        game.hasWon = game.checkForWinner(game.isCharHidden[game.isCharHidden.length-1]);
-        console.log("game.hasWon: " + game.hasWon);
-        if(!game.hasWon){
-            alert("You WON!!");
-        }
-       
+        game.hasWon = game.checkForWinner();
+      
+        if(game.hasWon){
+            game.endOfGame();
+        };
     },
     charNotFound: function(letter){
         
@@ -58,7 +60,8 @@ var game = {
         if(game.guessesLeft > 0){
             $("#wrongLetters").append(letter + " ");
         } else {
-                alert("Game Over!")
+            game.hasWon = false;
+            game.endOfGame();
         }
     },
     updatedDisplay: function(){
@@ -67,11 +70,11 @@ var game = {
 
         game.isCharHidden.forEach(function(bool, i){
             if(bool){
-                console.log("true");
+                console.log("isCharHidden=true, updatedisplay _");
                 str += "_ ";
             } else {
                 console.log(i);
-                console.log("false");
+                console.log("isCharHidden=false, updatedisplay with letter");
                 str = str + game.activeAnswer.charAt(i);
                 str += " ";
             }
@@ -88,19 +91,33 @@ var game = {
         }
     },
     checkForWinner: function(i){
-        console.log("check for winner");
-        if(game.isCharHidden[i] == false){
-            console.log(i + " is false");
-            if( i === 0){
-                //alert("WINNER");
-                return true;
-            } else {
-                i--;
-                console.log("i now = " + i + " check again");
-                game.checkForWinner(i);
+        var comp = 0;
+        for(var i = 0; i < game.isCharHidden.length; i++){
+            if(game.isCharHidden[i] === false){
+                comp++;
             }
-        } else 
-        return false;
+        }
+
+        if(comp === game.isCharHidden.length){
+            return true;
+        } else {
+            return false;
+        }
+    },
+    endOfGame: function(){
+        if(game.hasWon === true){
+            $("#message").html("Nice job, you won!");
+            // activate button
+
+            game.solvedWords.push(game.currentIndex);
+            game.myAudioElements[game.currentIndex].play();
+             $("#will-pic").attr("src", game.imageFiles[game.currentIndex]);
+             init();
+        } else {
+            $("#message").html("Rats, you lost.");
+            init();
+        }
+
     }
 };
 
@@ -108,7 +125,7 @@ document.onkeyup = function(evet){
     console.log("KeyUp");
     var userGuess = event.key.toLocaleLowerCase();
 
-    if (game.alphabet.indexOf(userGuess) > -1) {
+    if (game.alphabet.indexOf(userGuess) > -1 && game.isGameInProgress === true) {
         console.log("used letter position: " + game.usedLetters.indexOf(userGuess));
         if(game.usedLetters.indexOf(userGuess) < 0){
             game.usedLetters.push(userGuess);
@@ -116,20 +133,52 @@ document.onkeyup = function(evet){
             game.checkLetter(userGuess);
         } 
     } else if(event.key.toLocaleLowerCase() == '1'){
-         init();
+         startGame();
     }
 }
 
 function init(){
+    game.isGameInProgress = false;
+    game.usedLetters = [];
+    game.guessesLeft = 9;
+    game.activeAnswer = "";
+    game.isCharHidden = [];
+
+   
+
+      // initialize wrong letter 
+      $("#wrongLetters").html("");
+
+        // initialize guess left 
+        $("#guessesLeft").html("Guesses left: " + game.guessesLeft);
+
+        var newDiv = $("<span id=wLetters>");
+        newDiv.text("");
+        $("#wrongLetters").append(newDiv);
+
+        $("#hiddenWord").html("New Game? Press 1 to begin.");
+}; 
+
+
+function startGame(){
+    //game in progress
+    game.isGameInProgress = true;
+
     // rand number, modulus length of game.answers
-    var secretAnswer = game.answers[Math.floor(Math.random() * game.answers.length)];
-    
+    var rand = Math.floor(Math.random() * game.answers.length);
+
+    //check if answer has been solved so user doesn't repeat same word game during visit
+    while(game.solvedWords.indexOf(rand) !== -1){
+        rand = Math.floor(Math.random() * game.answers.length);
+    }
+    game.currentIndex = rand;
+    var secretAnswer = game.answers[rand];
+
     // set active answer
     game.activeAnswer = secretAnswer;
-    game.guessesLeft = 9; 
 
-    // init isCharHidden array all to false
-    for( var i = 0; i < game.activeAnswer.length; i++){
+     // init isCharHidden array all to false
+     for( var i = 0; i < game.activeAnswer.length; i++){
 
         //unhide non-alaphbet chars
         if(game.activeAnswer.charAt(i) === " "){
@@ -141,38 +190,20 @@ function init(){
             game.isCharHidden[i] = true;
         }
     }
+    
 
     //display game spaces like this _ _ _ _  
     var display = game.updatedDisplay();
     $("#hiddenWord").html(game.updatedDisplay());
     
-    // initialize wrong letter 
-    $("#wrongLetters").html("");
-
-    // initialize guess left 
-    $("#guessesLeft").html("Guesses left: " + game.guessesLeft);
-
-   // jQuery alternative to: var newDiv = document.createElement("div");
-   var newDiv = $("<span id=wLetters>");
-
-   // jQuery alternative to: newDiv.textContent = "A pleasure to meet you!";
-   newDiv.text("");
-
-   // jQuery alternative to: document.querySelector("#empty-div").appendChild(newDiv);
-   $("#wrongLetters").append(newDiv);
-   console.log("pre-load audio files");
-   
-   // Load audio elements
-    // game.audioFiles.forEach( function(mySrc, i){
-    //     console.log("load audio files");
-    // game.myAudioElements[i] = document.createElement("audio");
-    // game.myAudioElements[i].setAttribute("src", mySrc);
-    // });
 };
 //END OF INIT()
 
  // JavaScript function that wraps everything
  $( document ).ready(function() {
+
+    //initalize game and page
+    init();
 
     // Load audio elements
     game.audioFiles.forEach( function(mySrc, i){
