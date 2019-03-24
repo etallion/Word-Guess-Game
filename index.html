@@ -32,7 +32,7 @@
               
               <h1 class="text-center">
                 <strong>Word Guess - Will Ferrell Movies</strong>
-                <img src="https://uproxx.files.wordpress.com/2015/09/ferrel-ebd.jpg?quality=100&w=650&h=400">
+                <img id="will-pic" src="https://uproxx.files.wordpress.com/2015/09/ferrel-ebd.jpg?quality=100&w=650&h=400">
               </h1>
             
         
@@ -41,36 +41,36 @@
         
               <div class="col-lg-12">
         
-                <!-- Controls-->
-                <div id="sizeControls" class="card">
-                  <h4 class="card-header">Game Controls </h4>
+                <!-- Game Area-->
+                <div id="sizeControls" class="card" style="display:inline-block;">
+                  Game Area<span class="container" id="wrongLetters"></span>
+                </div>
                   <div class="card-body">
                     <div class="text-center">
-                      <button class="btn btn-dark btn-lg normal-button">
-                        <span class="fa fa-ok"></span> Normal</button>
-                           <button class="btn btn-warning btn-xs theme-button">
-                  <span class="fa fa-music"></span> Play Theme!</button>
-                 <button class="btn btn-dark btn-xs pause-button">
-                  <span class="fa fa-pause"></span> Pause Song</button>
+                       <div class="text-center" id="hiddenWord">New Game? Press 1 to begin.</div>
+                       
+                       <div class="container" id="lettersLeft">.</div>
+                      <div class="container" id="guessesLeft">.</div>
                     </div>
                   </div>
                 </div>     
                 
                  </div> 
-             </div> <!-- End of Control Row-->
+             </div> <!-- End of Game Area-->
         
-            <div class="row">
-              
-              <div class="col-lg-12 text-center">
-
-                <div class="text-center" id="hiddenWord">New Game? Press 1 to begin.</div>
-                <div class="container" id="wrongLetters"></div>
-                <div class="container" id="lettersLeft">.</div>
-                <div class="container" id="guessesLeft">.</div>
-
-              </div>
-
-            </div> <!-- End Game Main Row-->
+             <footer>
+               <div class="row">
+                  <div class="col-lg-12">
+                   <button class="btn btn-dark btn-lg" id="sound1" value="0"><span class="fa fa-music"></span>&nbsp;&nbsp;1&nbsp;</button>
+                   <button class="btn btn-dark btn-lg" id="sound2" value="1"><span class="fa fa-music"></span>&nbsp;&nbsp;2&nbsp;</button>
+                   <button class="btn btn-dark btn-lg" id="sound3" value="2"><span class="fa fa-music"></span>&nbsp;&nbsp;3&nbsp;</button>
+                   <button class="btn btn-lg btn-dark" id="sound4" value="3" ><span class="fa fa-music"></span>&nbsp;&nbsp;4&nbsp;</button>
+                   <button class="btn btn-lg btn-dark" id="sound5" value="4"><span class="fa fa-music"></span>&nbsp;&nbsp;5&nbsp;</button>
+                   <button class="btn btn-lg btn-dark" id="sound6" value="5"><span class="fa fa-music"></span>&nbsp;&nbsp;6&nbsp;</button>
+                   <button class="btn btn-lg btn-dark" id="sound7" value="6"><span class="fa fa-music"></span>&nbsp;&nbsp;7&nbsp;</button>
+                  </div>
+               </div>
+             </footer>
 
             </div>
           </div>

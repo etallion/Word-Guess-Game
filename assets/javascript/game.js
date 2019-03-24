@@ -1,22 +1,36 @@
- // JavaScript function that wraps everything
- //$(document).ready(function() {
+
 
 var game = {
-    answers : ["Taladega Nights", 
+    answers : ["Talladega Nights", 
     "Elf", 
     "Anchorman", 
     "Blades of Glory",
-    "Daddy's Home",
     "Stepbrother",
     "Zoolander",
     "Old School"],
+    imageFiles : ["assets/images/ricky.jpg",
+    "assets/images/elf.png",
+    "assets/images/ron.jpg",
+    "assets/images/blades.jpg",
+    "assets/images/stepbrothers.jpg",
+    "assets/images/mugatu.png",
+    "assets/images/frank-tank.jpg"],
+    audioFiles : ["assets/audio/piss.mp3",
+    "assets/audio/elf.mp3",
+    "assets/audio/bigdeal.mp3",
+    "assets/audio/blades.mp3",
+    "assets/audio/stepbrothers.mp3",
+    "assets/audio/mugatu.mp3",
+    "assets/audio/myboyblue.mp3"],
     alphabet:["a","b", "c", "d", "e", "f", "g",
     "h","i","j","k","l","m","n","o","p","q","r",
     "s","t","u","v","w","x","y","z"],
+    myAudioElements : [],
     usedLetters:[],
     guessesLeft:0,
     activeAnswer: "",
     isCharHidden: [],
+    hasWon: false,
     charFound: function(letter){
 
         //parse activeAnswer for position(s) of matching character
@@ -29,9 +43,9 @@ var game = {
        $("#hiddenWord").html(game.updatedDisplay());
         
         //check to see if puzzle solved by looking for all true values in isCharHidden
-        var boolGame = game.checkForWinner(game.isCharHidden[game.isCharHidden.length-1]);
-        console.log("boolGame: " + boolGame);
-        if(boolGame){
+        game.hasWon = game.checkForWinner(game.isCharHidden[game.isCharHidden.length-1]);
+        console.log("game.hasWon: " + game.hasWon);
+        if(!game.hasWon){
             alert("You WON!!");
         }
        
@@ -66,10 +80,10 @@ var game = {
     },
     checkLetter: function(letter){
         if (game.activeAnswer.indexOf(letter) > -1 || game.activeAnswer.indexOf(letter.toUpperCase()) > -1) {
-            console.log("found ...");
+            console.log("letter found in puzzle");
             game.charFound(letter);
         } else {
-            console.log("not found ...");
+            console.log("letter not found ");
             game.charNotFound(letter);
         }
     },
@@ -91,7 +105,7 @@ var game = {
 };
 
 document.onkeyup = function(evet){
-    console.log("on");
+    console.log("KeyUp");
     var userGuess = event.key.toLocaleLowerCase();
 
     if (game.alphabet.indexOf(userGuess) > -1) {
@@ -118,7 +132,10 @@ function init(){
     for( var i = 0; i < game.activeAnswer.length; i++){
 
         //unhide non-alaphbet chars
-        if(game.activeAnswer.charAt(i) === " " || game.activeAnswer.charAt(i) === "'"){
+        if(game.activeAnswer.charAt(i) === " "){
+            game.isCharHidden[i] = false;
+           // game.activeAnswer.charAt(i) = " ";
+        } else if(game.activeAnswer.charAt(i) === "'"){
             game.isCharHidden[i] = false;
         } else { // hide letter
             game.isCharHidden[i] = true;
@@ -136,33 +153,42 @@ function init(){
     $("#guessesLeft").html("Guesses left: " + game.guessesLeft);
 
    // jQuery alternative to: var newDiv = document.createElement("div");
-   var newDiv = $("<div id=wLetters>");
+   var newDiv = $("<span id=wLetters>");
 
    // jQuery alternative to: newDiv.textContent = "A pleasure to meet you!";
    newDiv.text("");
 
    // jQuery alternative to: document.querySelector("#empty-div").appendChild(newDiv);
    $("#wrongLetters").append(newDiv);
-
+   console.log("pre-load audio files");
+   
+   // Load audio elements
+    // game.audioFiles.forEach( function(mySrc, i){
+    //     console.log("load audio files");
+    // game.myAudioElements[i] = document.createElement("audio");
+    // game.myAudioElements[i].setAttribute("src", mySrc);
+    // });
 };
 //END OF INIT()
 
-// Gets Link for Theme Song
- var audioElement = document.createElement("audio");
- audioElement.setAttribute("src", "assets/myboyblue.mp3");
+ // JavaScript function that wraps everything
+ $( document ).ready(function() {
 
- var audioElement2 = document.createElement("audio");
- audioElement2.setAttribute("src", "assets/ilikeyou.mp3");
-
- // Theme Button
- $(".theme-button").on("click", function() {
-    console.log("jk");
-   audioElement.play();
+    // Load audio elements
+    game.audioFiles.forEach( function(mySrc, i){
+        console.log("load audio files");
+    game.myAudioElements[i] = document.createElement("audio");
+    game.myAudioElements[i].setAttribute("src", mySrc);
+    });
+     
+console.log("pre-handle click");
+ //Handler for sound effect buttons
+ $(".btn").on("click", function() {
+    console.log("handle click");
+    game.myAudioElements[$(this).attr("value")].play();
+   // $("#will-pic").setAttribute("src", game.imageFiles[$(this).attr("value")]);
+   $("#will-pic").attr("src", game.imageFiles[$(this).attr("value")]);
  });
 
- $(".pause-button").on("click", function() {
-    console.log("pause");
-   audioElement2.play();
- });
 
-//});
+});
