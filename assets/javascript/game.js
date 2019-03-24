@@ -5,7 +5,7 @@ var game = {
     "Elf", 
     "Anchorman", 
     "Blades of Glory",
-    "Stepbrother",
+    "Step Brothers",
     "Zoolander",
     "Old School"],
     imageFiles : ["assets/images/ricky.jpg",
@@ -75,8 +75,12 @@ var game = {
             } else {
                 console.log(i);
                 console.log("isCharHidden=false, updatedisplay with letter");
-                str = str + game.activeAnswer.charAt(i);
-                str += " ";
+                if(game.activeAnswer.charAt(i) === " "){
+                    str = str + "&nbsp;";
+                } else {
+                    str = str + game.activeAnswer.charAt(i);
+                    str += " ";
+                }
             }
         });
         return str;
@@ -135,22 +139,22 @@ document.onkeyup = function(evet){
             console.log("user guessed letter: " + userGuess);
             game.checkLetter(userGuess);
         } 
-    } else if(event.key.toLocaleLowerCase() == '1'){
-         startGame();
+    } else if(event.key.toLocaleLowerCase() == '1' && (game.solvedWords.length < game.answers.length)){
+        init(); 
+        startGame();
     }
 }
 
 function init(){
     game.isGameInProgress = false;
-    game.usedLetters = [];
-    game.guessesLeft = 9;
-    game.activeAnswer = "";
-    game.isCharHidden = [];
+    if(game.solvedWords.length < game.answers.length){
+        game.usedLetters = [];
+        game.guessesLeft = 9;
+        game.activeAnswer = "";
+        game.isCharHidden = [];
 
-   
-
-      // initialize wrong letter 
-      $("#wrongLetters").html("");
+        // initialize wrong letter 
+         $("#wrongLetters").html("");
 
         // initialize guess left 
         $("#guessesLeft").html("Guesses left: " + game.guessesLeft);
@@ -160,12 +164,19 @@ function init(){
         $("#wrongLetters").append(newDiv);
 
         $("#hiddenWord").html("New Game? Press 1 to begin.");
+
+    } else {
+        //all games solved
+        $("#hiddenWord").html("Great work, you solved all the puzzles!<br> Sit back and enjoy your Achievements.");
+    }
+
 }; 
 
 
 function startGame(){
     //game in progress
     game.isGameInProgress = true;
+    $("#message").html("");
 
     // rand number, modulus length of game.answers
     var rand = Math.floor(Math.random() * game.answers.length);
