@@ -128,7 +128,7 @@ var game = {
     }
 };
 
-document.onkeyup = function(evet){
+document.onkeyup = function(event){
     console.log("KeyUp");
     var userGuess = event.key.toLocaleLowerCase();
 
